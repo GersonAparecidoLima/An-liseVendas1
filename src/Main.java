@@ -27,19 +27,28 @@ public class Main {
 
                 // Divide a linha do CSV em partes
                 String[] values = line.split(",");
-                Integer month = Integer.valueOf(values[0].trim());
-                Integer year = Integer.valueOf(values[1].trim());
-                String seller = values[2].trim();
-                Integer quantity = Integer.valueOf(values[3].trim());
-                Double total = Double.valueOf(values[4].trim());
+                if (values.length < 5) {
+                    System.out.println("Linha inválida: " + line);
+                    continue;
+                }
 
-                // Cria um objeto Sale e adiciona à lista
-                sales.add(new Sale(month, year, seller, quantity, total));
+                try {
+                    Integer month = Integer.valueOf(values[0].trim());
+                    Integer year = Integer.valueOf(values[1].trim());
+                    String seller = values[2].trim();
+                    Integer quantity = Integer.valueOf(values[3].trim());
+                    Double total = Double.valueOf(values[4].trim());
+
+                    // Cria um objeto Sale e adiciona à lista
+                    sales.add(new Sale(month, year, seller, quantity, total));
+                } catch (NumberFormatException e) {
+                    System.out.println("Erro ao processar linha: " + line);
+                    continue;
+                }
             }
             
             // Análise 1: Cinco primeiras vendas de 2016 de maior preço médio
-            System.out.println("");
-            System.out.println("Cinco primeiras vendas de 2016 de maior preço médio:");
+            System.out.println("\nCinco primeiras vendas de 2016 de maior preço médio:");
             sales.stream()
                     .filter(sale -> sale.getYear() == 2016) // Filtra apenas as vendas de 2016
                     .sorted(Comparator.comparingDouble(Sale::averagePrice).reversed()) // Ordena por preço médio decrescente
@@ -48,22 +57,18 @@ public class Main {
             
             // Análise 2: Valor total vendido pelo vendedor Logan nos meses 1 e 7 de qualquer ano
             Double totalLogan = sales.stream()
-                    .filter(sale -> sale.getSeller().equals("Logan"))
-                    .filter(sale -> sale.getMonth() == 1 || sale.getMonth() == 7)
+                    .filter(sale -> sale.getSeller().equals("Logan") && (sale.getMonth() == 1 || sale.getMonth() == 7))
                     .mapToDouble(Sale::getTotal)
                     .sum();
 
-            System.out.println("");
-            System.out.println("Valor total vendido pelo vendedor Logan nos meses 1 e 7 = " + totalLogan);
-            
+            System.out.printf("\nValor total vendido pelo vendedor Logan nos meses 1 e 7 = %.2f\n", totalLogan);
             
         } catch (FileNotFoundException e) {
-            System.out.println("Erro: " +  filePath + " (O sistema não pode encontrar o arquivo especificado) ");
-            // Exiba opções ao usuário (tentar novamente, informar outro caminho, etc.)
+            System.out.println("Erro: O arquivo '" + filePath + "' não foi encontrado.");
+            System.out.println("Verifique o caminho e tente novamente.");
         } catch (IOException e) {
             System.out.println("Erro ao ler o arquivo: " + filePath);
             e.printStackTrace();
         }
-      
     }
 }
