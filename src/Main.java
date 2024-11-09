@@ -64,8 +64,7 @@ public class Main {
             System.out.printf("\nValor total vendido pelo vendedor Logan nos meses 1 e 7 = %.2f\n", totalLogan);
             
         } catch (FileNotFoundException e) {
-            System.out.println("Erro: O arquivo '" + filePath + "' não foi encontrado.");
-            System.out.println("Verifique o caminho e tente novamente.");
+            System.out.println("Erro: " + filePath + " (O sistema não pode encontrar o arquivo especificado) ");
         } catch (IOException e) {
             System.out.println("Erro ao ler o arquivo: " + filePath);
             e.printStackTrace();
